@@ -1,101 +1,115 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-
 
 namespace GameOfDice
-{    
-    class DiceController{
-        public List<Person> GetPlayerOrderedList(int n){
-            List<Person> persons = new List<Person>();
+{
+    class DiceController
+    {
+        // Returns the list of order of players
+        const int InvalidDiceRoll = 1;
+        public List<Player> GetPlayerOrderedList(int n)
+        {
+            List<Player> players = new List<Player>();
             List<int> nums = new List<int>();
 
             Random random = new Random();
 
-            while(nums.Count < n ){
-                int tempRandomNumber = random.Next(1,n+1);
-                if(nums.IndexOf(tempRandomNumber)!=-1){
+            while (nums.Count < n)
+            {
+                int tempRandomNumber = random.Next(1, n + 1);
+                if (nums.IndexOf(tempRandomNumber) != -1)
+                {
                     continue;
                 }
                 nums.Add(tempRandomNumber);
             }
 
-            foreach(int i in nums){
-                persons.Add(new Person("Person-"+i));
+            foreach (int i in nums)
+            {
+                players.Add(new Player("Player-" + i));
             }
-            return persons;
+            return players;
         }
 
-    public void StartGame(ref int n,ref int m){
-        
-            Displayer displayer= new Displayer();          
+        //starts the Game of Dice
+        public void StartGame(ref int n, ref int m)
+        {
 
-            List<Person> persons =this.GetPlayerOrderedList(n);
-            List<Person> winners=new List<Person>();
+            Displayer displayer = new Displayer();
 
-            displayer.PrintPlayerOrder(persons);
+            List<Player> players = this.GetPlayerOrderedList(n);
+            List<Player> winners = new List<Player>();
+
+            displayer.PrintPlayerOrder(players);
 
             System.Console.WriteLine("Press any key to begin");
             Console.ReadKey();
             Console.Clear();
 
-            int count=1;
-            while(persons.Count!=0){
-            System.Console.WriteLine("==============Step"+count+"=============");
-            count++;
-            int i=0;
-            while(i<persons.Count)
+            int count = 1;
+            while (players.Count != 0)
             {
-                if(!persons[i].SkipChance)
+                System.Console.WriteLine("==============Step" + count + "=============");
+                count++;
+                int i = 0;
+                while (i < players.Count)
                 {
-             System.Console.WriteLine($"{persons[i].Name}, it's ur chance to throw the dice (press 'r')");
-             while(!Validator.ValidateDiceStr(Console.ReadKey().KeyChar));
+                    if (!players[i].SkipChance)
+                    {
+                        System.Console.WriteLine($"{players[i].Name}, it's ur chance to throw the dice (press 'r')");
+                        while (!Validator.ValidateDiceStr(Console.ReadKey().KeyChar)) ;
 
-             System.Console.WriteLine();
+                        System.Console.WriteLine();
 
-             int random = Dice.KingsDice.GetNum();             
-             
-             persons[i].Score+= random;  
-             System.Console.WriteLine("your Dice roll returned :"+random);
+                        int random = Dice.KingsDice.GetNum();
 
-
-             if(random ==1 && persons[i].LastDiceRoll==1){
-                 persons[i].SkipChance= true;
-                 System.Console.WriteLine("OOPS!!! Ur next turn will be skipped as a penalty");
-             }
-             persons[i].LastDiceRoll = random;
+                        players[i].Score += random;
+                        System.Console.WriteLine("your Dice roll returned :" + random);
 
 
-             if(persons[i].Score>=m){
-                System.Console.WriteLine("WOW!!! U Won \nPlayer "+persons[i].Name+" got "+(winners.Count+1)+" Place \n");
-                persons[i].WinningPosition = winners.Count+1;
-                winners.Add(persons[i]);
-                persons.RemoveAt(i);                
-             }
-            
-             if (winners.Count == n){
-                 System.Console.WriteLine("All the player finished");
-                 displayer.PrintFinalScoreboard(winners);
+                        if (random == InvalidDiceRoll && players[i].LastDiceRoll == InvalidDiceRoll)
+                        {
+                            players[i].SkipChance = true;
+                            System.Console.WriteLine("OOPS!!! Ur next turn will be skipped as a penalty");
+                        }
+                        players[i].LastDiceRoll = random;
 
-                 System.Console.WriteLine("If u like the game, Hire Souvik Das(souvikddss@gmail.com)\n");
-                 break;
-             }
 
-             if(random == 6){
-                 System.Console.WriteLine("WOW!!! Nice hand , U Got another chance :)");
-                 continue;
-             }else
-             {
-                displayer.printScore(persons,winners);
-             }
-                }else{                    
-                    System.Console.WriteLine($"{persons[i].Name} chance Skipped");
-                    persons[i].SkipChance = false;
+                        if (players[i].Score >= m)
+                        {
+                            System.Console.WriteLine("WOW!!! U Won \nPlayer " + players[i].Name + " got " + (winners.Count + 1) + " Place \n");
+                            players[i].WinningPosition = winners.Count + 1;
+                            winners.Add(players[i]);
+                            players.RemoveAt(i);
+                        }
+
+                        if (winners.Count == n)
+                        {
+                            System.Console.WriteLine("All the player finished");
+                            displayer.PrintFinalScoreboard(winners);
+
+                            System.Console.WriteLine("If u like the game, Hire Souvik Das(souvikddss@gmail.com)\n");
+                            break;
+                        }
+
+                        if (random == 6)
+                        {
+                            System.Console.WriteLine("WOW!!! Nice hand , U Got another chance :)");
+                            continue;
+                        }
+                        else
+                        {
+                            displayer.PrintScore(players, winners);
+                        }
+                    }
+                    else
+                    {
+                        System.Console.WriteLine($"{players[i].Name} chance Skipped");
+                        players[i].SkipChance = false;
+                    }
+                    i++;
                 }
-             i++;
             }
         }
     }
-    }
-
 }

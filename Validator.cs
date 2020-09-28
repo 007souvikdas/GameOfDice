@@ -1,12 +1,16 @@
 using System;
 
-namespace GameOfDice{
-    class Validator{
-        public static bool ValidateInt(string input,ref int n){
+namespace GameOfDice
+{
+    class Validator
+    {
+        public static bool ValidateInt(string input, ref int n)
+        {
             try
             {
                 n = int.Parse(input);
-                if(n<1){
+                if (n < 1)
+                {
                     throw new Exception("Invalid Arguments");
                 }
                 return true;
@@ -15,14 +19,16 @@ namespace GameOfDice{
             {
                 System.Console.WriteLine("Please enter a valid number (greater than 1)");
                 return false;
-            }              
+            }
 
         }
 
-        public static bool ValidateDiceStr(char input){
+        public static bool ValidateDiceStr(char input)
+        {
             try
             {
-                if(!(input=='r')){
+                if (!(input == 'r'))
+                {
                     throw new Exception("Invalid Arguments");
                 }
                 return true;
@@ -33,7 +39,7 @@ namespace GameOfDice{
                 return false;
             }
         }
-        
-        
-    }   
+
+
+    }
 }
